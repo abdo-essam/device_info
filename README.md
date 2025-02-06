@@ -6,7 +6,7 @@ A Flutter application that elegantly displays device information including model
 
 <table>
   <tr>
-    <td><img src="screenshots/android_screenshot.png" width="200"></td>
+    <td><img src="android_screenshot.png" width="200"></td>
   </tr>
   <tr>
     <td align="center">Android</td>
