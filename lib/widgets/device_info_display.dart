@@ -24,34 +24,27 @@ class _DeviceInfoDisplayState extends State<DeviceInfoDisplay> {
   Future<void> _getDeviceInfo() async {
     try {
       if (defaultTargetPlatform == TargetPlatform.android) {
-        final AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
+        final androidInfo = await _deviceInfo.androidInfo;
+        if (!mounted) return;
+
         setState(() {
           _deviceData = {
-            'Device Model': androidInfo.model ?? 'Unknown',
-            'OS Version': androidInfo.version.release ?? 'Unknown',
-            'Android SDK': androidInfo.version.sdkInt.toString() ?? 'Unknown',
-            'Brand': androidInfo.brand ?? 'Unknown',
-            'Manufacturer': androidInfo.manufacturer ?? 'Unknown',
-            'Device': androidInfo.device ?? 'Unknown',
-            'Product': androidInfo.product ?? 'Unknown',
-            'Hardware': androidInfo.hardware ?? 'Unknown',
-            'Display': androidInfo.display ?? 'Unknown',
-            'Physical Device': androidInfo.isPhysicalDevice == null
-                ? 'Unknown'
-                : androidInfo.isPhysicalDevice ? 'Yes' : 'No',
+            'Device Model': androidInfo.model,
+            'OS Version': 'Android ${androidInfo.version.release}',
+            'Brand': androidInfo.brand,
+            'Manufacturer': androidInfo.manufacturer,
           };
         });
       } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-        final IosDeviceInfo iosInfo = await _deviceInfo.iosInfo;
+        final iosInfo = await _deviceInfo.iosInfo;
+        if (!mounted) return;
+
         setState(() {
           _deviceData = {
             'Device Model': iosInfo.model ?? 'Unknown',
-            'OS Version': iosInfo.systemVersion ?? 'Unknown',
+            'OS Version': 'iOS ${iosInfo.systemVersion ?? 'Unknown'}',
             'System Name': iosInfo.systemName ?? 'Unknown',
             'Name': iosInfo.name ?? 'Unknown',
-            'Physical Device': iosInfo.isPhysicalDevice == null
-                ? 'Unknown'
-                : iosInfo.isPhysicalDevice ? 'Yes' : 'No',
           };
         });
       } else {
@@ -65,16 +58,21 @@ class _DeviceInfoDisplayState extends State<DeviceInfoDisplay> {
     } catch (e, stackTrace) {
       debugPrint('Error getting device info: $e');
       debugPrint('Stack trace: $stackTrace');
-      setState(() {
-        _deviceData = {
-          'Error': 'Failed to get device information',
-          'Details': e.toString(),
-        };
-      });
+
+      if (mounted) {
+        setState(() {
+          _deviceData = {
+            'Error': 'Failed to get device information',
+            'Details': e.toString(),
+          };
+        });
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
